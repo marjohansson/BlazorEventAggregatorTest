@@ -1,0 +1,38 @@
+﻿@page "/"
+
+@rendermode RenderMode.InteractiveServer
+@implements IHandle<MyEventModel>
+@implements IDisposable
+
+<PageTitle>Home</PageTitle>
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+<h1>@TheMessage</h1>
+
+@code {
+    [Inject]
+    public IEventAggregator eventAggregator { get; set; }
+
+    private string? TheMessage;
+
+    public Task HandleAsync(MyEventModel message)
+    {
+        TheMessage = message.Message;
+
+        return Task.CompletedTask;
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        eventAggregator.Subscribe(this);
+    }
+
+    public void Dispose()
+    {
+        eventAggregator.Unsubscribe(this);
+    }
+}

@@ -1,0 +1,36 @@
+﻿@inherits ComponentBase
+@implements IHandle<MyEventModel>
+@implements IDisposable
+
+<div style="background-color:beige; border-width:1px; border:dotted">
+    <h3>@Title: @TheMessage</h3>
+</div>
+@code {
+
+    [Inject]
+    public IEventAggregator eventAggregator { get; set; }
+
+    public string? TheMessage { get; set; }
+
+    [Parameter]
+    public string Title { get; set; }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        eventAggregator.Subscribe(this);
+    }
+
+    public Task HandleAsync(MyEventModel message)
+    {
+        TheMessage = message.Message;
+
+        return Task.CompletedTask;
+    }
+
+    public void Dispose()
+    {
+        eventAggregator.Unsubscribe(this);
+    }
+}
